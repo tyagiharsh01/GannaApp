@@ -9,9 +9,12 @@ import java.util.List;
 
 @Repository
 public interface PurchiRepo extends MongoRepository<Purchi,String> {
+
     List<Purchi> findByEmail(String email);
+
     @Query("{'email': ?0, 'troliHolder': ?1}")
     List<Purchi> findByEmailAndTroliHolderName(String email,String troliHolder);
+
     @Query("{'email': ?0, 'purchiHolderName': ?1}")
     List<Purchi> findByEmailAndPurchiHolderName(String email,String purchiHolderName);
 }

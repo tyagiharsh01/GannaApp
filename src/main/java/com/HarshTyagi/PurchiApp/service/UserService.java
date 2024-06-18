@@ -6,21 +6,34 @@ import com.HarshTyagi.PurchiApp.domain.User;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
-    public User addUser(User user);
-    public Purchi addPurchi(String email, Purchi purchi);
-    public List<Purchi> getAllPurchi(String email);
-    public List<Purchi> getPurchiFromName(String email,String troliHolderName);
-    public double getTotalAmount(String email);
-    public double gettotalAmountForSpecificTimeInterval(String email,Date startDate, Date endDate);
-    public double getTotalWeight(String email);
-    public double getTotalWeightForServant(String email, String troliHolderName);
-    public int getTotalPurchiByName(String email, String PurchiHoldername);
-    public long  getTotalPurchi(String email);
-    public User loginUser(User user);
-    public Purchi deletePurchi(String email, String id);
-    public List<Purchi> PurchiTimePeriodReport(String email,String startDate,String endDate);
+     User addUser(User user);
+
+     Purchi addPurchi(String email, Purchi purchi);
+
+     List<Purchi> getAllPurchi(String email);
+
+     List<Purchi> getPurchiFromName(String email,String troliHolderName);
+
+     double getTotalAmount(String email);
+
+     double gettotalAmountForSpecificTimeInterval(String email,Date startDate, Date endDate);
+
+     double getTotalWeight(String email);
+
+     double getTotalWeightForServant(String email, String troliHolderName);
+
+     int getTotalPurchiByName(String email, String PurchiHoldername);
+
+     long  getTotalPurchi(String email);
+
+     User loginUser(User user);
+
+     Purchi deletePurchi(String email, String id);
+
+     Map<Double,List<Purchi>> PurchiTimePeriodReport(String email, String startDate, String endDate);
 
 
 

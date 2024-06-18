@@ -1,9 +1,12 @@
 package com.HarshTyagi.PurchiApp.service;
 
+import com.HarshTyagi.PurchiApp.Helper.DateHelper;
 import com.HarshTyagi.PurchiApp.Repository.PurchiRepo;
 import com.HarshTyagi.PurchiApp.Repository.UserRepo;
 import com.HarshTyagi.PurchiApp.domain.Purchi;
 import com.HarshTyagi.PurchiApp.domain.User;
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,54 +26,36 @@ public class UserServiceImpl implements  UserService {
 
     @Override
     public User addUser(User user) {
-        if (userRepo.existsById(user.getEmail())) {
-            return null;
-        } else {
-            return userRepo.insert(user);
-        }
-
-
+        return userRepo.existsById(user.getEmail()) ? null : userRepo.insert(user);
     }
 
     @Override
     public Purchi addPurchi(String email, Purchi purchi) {
-        purchi.setEmail(email);
-        if (userRepo.existsById(email))
+        if (userRepo.existsById(email)) {
+            purchi.setEmail(email);
             return purchiRepo.insert(purchi);
+        }
         else
             return null;
     }
 
-
     @Override
     public List<Purchi> getAllPurchi(String email) {
-        if (userRepo.existsById(email)) {
-            return purchiRepo.findByEmail(email);
-        } else {
-            return null;
-        }
+        return userRepo.existsById(email) ? purchiRepo.findByEmail(email) : null;
     }
 
     @Override
     public List<Purchi> getPurchiFromName(String email, String troliHolderName) {
-
-        if (userRepo.existsById(email)) {
-            return purchiRepo.findByEmailAndTroliHolderName(email, troliHolderName);
-        } else {
-            return null;
-        }
-
+        return userRepo.existsById(email) ? purchiRepo.findByEmailAndTroliHolderName(email, troliHolderName) : null;
     }
 
     @Override
     public double getTotalAmount(String email) {
-        double sum = 0;
-        Optional<User> optionalUser = userRepo.findById(email);
-        if (optionalUser.isPresent()) {
-            List<Purchi> purchis = purchiRepo.findByEmail(email);
-            sum = purchis.stream().mapToDouble(purchi1 -> purchi1.getRate() * purchi1.getWeight()).sum();
-        }
-        return sum;
+        return userRepo.findById(email)
+                .map(purchis->purchiRepo.findByEmail(email)
+                        .stream().mapToDouble(p->p.getRate()*p.getWeight())
+                        .sum()).
+                orElse(0.0);
     }
 
     @Override
@@ -90,7 +75,6 @@ public class UserServiceImpl implements  UserService {
         }
         return sum;
     }
-
 
     @Override
     public double getTotalWeight(String email) {
@@ -163,8 +147,31 @@ public class UserServiceImpl implements  UserService {
     }
 
     @Override
-    public List<Purchi> PurchiTimePeriodReport(String email, String startDate, String endDate) {
-        return null;
+    public Map<Double, List<Purchi>> PurchiTimePeriodReport(String email, String startDate, String endDate) {
+        Map<Double, List<Purchi>> purchiMap = new HashMap<>();
+
+        // Define the interval using helper method
+        Interval interval = DateHelper.defineInterval(startDate, endDate);
+
+        // Fetch all purchis for the given email
+        List<Purchi> purchis = getAllPurchi(email);
+
+        // Filter the purchis within the specified interval, or use an empty list if purchis is null
+        List<Purchi> filteredPurchis = (purchis != null) ?
+                purchis.stream()
+                        .filter(purchi -> interval.contains(new DateTime(purchi.getDate())))
+                        .collect(Collectors.toList())
+                : Collections.emptyList();
+
+        // Calculate the sum of the weights multiplied by rates
+        double sum = filteredPurchis.stream()
+                .mapToDouble(purchi -> purchi.getWeight() * purchi.getRate())
+                .sum();
+
+        // Put the sum and filtered purchis list into the map
+        purchiMap.put(sum, filteredPurchis);
+
+        return purchiMap;
     }
 }
 

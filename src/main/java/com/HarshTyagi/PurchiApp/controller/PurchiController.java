@@ -30,8 +30,6 @@ public class PurchiController{
         this.tokenGenerator = tokenGenerator;
     }
 
-
-
     //http://localhost:8082/Purchi/addPurchi
     @PostMapping("/addPurchi")
     public ResponseEntity addPurchi(HttpServletRequest httpServletRequest, @RequestBody Purchi purchi){
@@ -39,11 +37,10 @@ public class PurchiController{
 
          return new ResponseEntity<>(userService.addPurchi(email, purchi), HttpStatus.OK);
     }
+
     //http://localhost:8082/Purchi/addUser
     @PostMapping("/addUser")
     public ResponseEntity addUser(@RequestBody User user){
-
-
         User retrivedUser = userService.addUser(user);
         if(retrivedUser!=null){
             return new ResponseEntity(tokenGenerator.generateToken(retrivedUser),HttpStatus.OK);
@@ -52,6 +49,7 @@ public class PurchiController{
             return  new ResponseEntity("Failed.......",HttpStatus.EXPECTATION_FAILED);
         }
     }
+
     // http://localhost:8082/Purchi/totalPurchi
     @GetMapping("/totalPurchi")
     public ResponseEntity<?> getAllPurchi(HttpServletRequest httpServletRequest){
@@ -60,6 +58,7 @@ public class PurchiController{
         return new ResponseEntity<>(userService.getAllPurchi(email),HttpStatus.OK);
 
     }
+
     // http://localhost:8082/Purchi/getByTroliHolderName/johndoe@example.com/Jane Smith
     @GetMapping("/getByTroliHolderName/{email}/{troliHolderName}")
     public ResponseEntity<?> getAllPurchiAccordingToTroliHolderName(@PathVariable String email,@PathVariable String troliHolderName){
@@ -71,6 +70,7 @@ public class PurchiController{
         String email = (String) httpServletRequest.getAttribute("email");
          return new ResponseEntity<>(userService.getTotalAmount(email),HttpStatus.OK);
     }
+
     // http://localhost:8082/Purchi/totalWeight
     @GetMapping("/totalWeight")
     public ResponseEntity<?> getTotalWeight(HttpServletRequest httpServletRequest){
@@ -78,11 +78,13 @@ public class PurchiController{
         System.out.println(email);
          return new ResponseEntity<>(userService.getTotalWeight(email),HttpStatus.OK);
     }
+
     // http://localhost:8082/Purchi/totalPurchi/johndoe@example.com/Jhone Doe
     @GetMapping("/totalPurchi/{email}/{purchiHolderName}")
     public  ResponseEntity<?> getTotalPurchiByName(@PathVariable String email, @PathVariable String purchiHolderName){
          return new ResponseEntity<>(userService.getTotalPurchiByName(email,purchiHolderName),HttpStatus.OK);
     }
+
      // http://localhost:8082/totaltroliholderWeight/Jane Smith
     @GetMapping("/totaltroliholderWeight/{troliHolderName}")
     public  ResponseEntity<?> getTotalWeightForServant( HttpServletRequest httpServletRequest, @PathVariable String troliHolderName){
@@ -90,6 +92,7 @@ public class PurchiController{
         String troliHolderName1 = troliHolderName.trim();
          return new ResponseEntity<>(userService.getTotalWeightForServant(email, troliHolderName1),HttpStatus.OK);
     }
+
    // http://localhost:8082/Purchi/totalAmountBetweenTwoDates/johndoe@example.com/2023-09-12/2023-09-20
     @GetMapping("/totalAmountBetweenTwoDates/{startDate}/{endDate}")
     public ResponseEntity<?> getTotalAmountBetweenSpecificDates(HttpServletRequest httpServletRequest, @PathVariable String startDate, @PathVariable String endDate) throws ParseException {
@@ -100,6 +103,7 @@ public class PurchiController{
         System.out.println(startParsedDate+"-------"+endParsedDate);
         return  new ResponseEntity<>(userService.gettotalAmountForSpecificTimeInterval(email,startParsedDate,endParsedDate), HttpStatus.OK);
     }
+
     // http://localhost:8082/Purchi/login
     @PostMapping ("/login")
     public ResponseEntity logIn(@RequestBody User user){
@@ -115,6 +119,7 @@ public class PurchiController{
             return  new ResponseEntity("Failed.......",HttpStatus.EXPECTATION_FAILED);
         }
     }
+
     @DeleteMapping("/deletePurchi/{id}")
     public ResponseEntity<?> deletePurchi(HttpServletRequest httpServletRequest,@PathVariable String id){
         System.out.println("Hello hi ");
@@ -123,5 +128,6 @@ public class PurchiController{
         System.out.println(id);
         return new ResponseEntity<>(userService.deletePurchi(email,id),HttpStatus.OK);
     }
+
 
 }
